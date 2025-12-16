@@ -10,7 +10,7 @@ function App() {
   return (
     <div>
       {/* Navigation */}
-      <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 bg-white rounded-lg shadow-lg p-2 flex gap-2">
+      <div className="fixed left-4 top-1/2 transform -translate-y-1/2 z-50 bg-white rounded-lg shadow-lg p-2 flex flex-col gap-2">
         <button
           onClick={() => setCurrentView("breadboard")}
           className={`px-4 py-2 rounded-md font-medium transition-colors ${
