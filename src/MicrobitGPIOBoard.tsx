@@ -12,12 +12,22 @@ const MicrobitGPIOBoard = () => {
   const CORNER_RADIUS = 8;
 
   // Pin component (header pins/through-holes)
-  const Pin = ({ x, y, id }: { x: number; y: number; id: string }) => (
+  const Pin = ({
+    x,
+    y,
+    id,
+    isPower,
+  }: {
+    x: number;
+    y: number;
+    id: string;
+    isPower?: boolean;
+  }) => (
     <circle
       cx={x}
       cy={y}
       r={PIN_SIZE / 2}
-      fill={hoveredPin === id ? "#10b981" : "#6b7280"}
+      fill={hoveredPin === id ? (isPower ? "#ef4444" : "#10b981") : "#6b7280"}
       stroke="#000"
       strokeWidth="0.5"
       onMouseEnter={() => setHoveredPin(id)}
@@ -57,7 +67,7 @@ const MicrobitGPIOBoard = () => {
     const sectionY = 60;
     const sectionWidth = 180;
     const sectionHeight = 180;
-    const startX = sectionX + 40;
+    const startX = sectionX + 30;
     const startY = sectionY + 50;
     const elements = [];
 
@@ -88,37 +98,35 @@ const MicrobitGPIOBoard = () => {
     );
 
     const pins = [
-      { label: "GND" },
-      { label: "GND" },
-      { label: "3.3V" },
-      { label: "5V" },
-      { label: "VIN" },
+      { label: "GND", isPower: false, rowIdx: 0 },
+      { label: "GND", isPower: false, rowIdx: 1 },
+      { label: "3.3V", isPower: true, rowIdx: 2 },
+      { label: "5V", isPower: true, rowIdx: 3 },
+      { label: "VIN", isPower: true, rowIdx: 4 },
     ];
 
-    pins.forEach((pin, idx) => {
-      const y = startY + idx * PITCH;
-      // Pin holes (2 columns) - header pins
-      elements.push(
-        <Pin
-          key={`power-L-${idx}`}
-          x={startX}
-          y={y}
-          id={`power-${pin.label}-L-${idx}`}
-        />
-      );
-      elements.push(
-        <Pin
-          key={`power-R-${idx}`}
-          x={startX + PITCH}
-          y={y}
-          id={`power-${pin.label}-R-${idx}`}
-        />
-      );
+    pins.forEach((pin) => {
+      const y = startY + pin.rowIdx * PITCH;
+      const pinSpacing = 12; // Wider spacing between pins
+
+      // 4 pins arranged horizontally with equal intervals (numbered 1-4)
+      for (let i = 1; i <= 4; i++) {
+        elements.push(
+          <Pin
+            key={`power-${pin.rowIdx}-${i}`}
+            x={startX + (i - 1) * pinSpacing}
+            y={y}
+            id={`power-${pin.label}-${pin.rowIdx}-${i}`}
+            isPower={pin.isPower}
+          />
+        );
+      }
+
       // Label
       elements.push(
         <Label
-          key={`power-lbl-${idx}`}
-          x={startX + 50}
+          key={`power-lbl-${pin.rowIdx}`}
+          x={startX + 3 * pinSpacing + 10}
           y={y}
           text={pin.label}
           size={10}
